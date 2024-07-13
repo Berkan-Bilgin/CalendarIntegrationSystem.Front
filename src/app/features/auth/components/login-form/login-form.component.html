@@ -1,0 +1,54 @@
+<div class="form-container">
+  <h3 class="form-header">Giriş Yap</h3>
+  <form class="form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="relative mb-4">
+      <input
+        class="input w-full pr-10"
+        id="email"
+        type="email"
+        placeholder="Email"
+        formControlName="email"
+        [ngClass]="{ 'input-error': isControlInvalid('email') }"
+      />
+      <span
+        class="material-icons absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-300"
+        >email</span
+      >
+      <div
+        *ngIf="isControlInvalid('email')"
+        class="error-text absolute left-0 bottom-0 transform translate-y-full text-red-500"
+      >
+        Geçerli bir email gerekli
+      </div>
+    </div>
+    <div class="relative mb-4">
+      <input
+        class="input w-full pr-10"
+        id="password"
+        type="password"
+        placeholder="Şifre"
+        formControlName="password"
+        [ngClass]="{ 'input-error': isControlInvalid('password') }"
+      />
+      <span
+        class="material-icons absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-300"
+        >lock</span
+      >
+      <div
+        *ngIf="isControlInvalid('password')"
+        class="error-text absolute left-0 bottom-0 transform translate-y-full text-red-500"
+      >
+        Şifre gerekli
+      </div>
+    </div>
+    <div class="button-container">
+      <button class="button" type="submit">Giriş Yap</button>
+    </div>
+    <div class="text-center mt-4">
+      <span>Hesabınız yok mu?</span>
+      <a routerLink="/signup" class="text-blue-500 ml-2 cursor-pointer">
+        Kayıt Ol
+      </a>
+    </div>
+  </form>
+</div>

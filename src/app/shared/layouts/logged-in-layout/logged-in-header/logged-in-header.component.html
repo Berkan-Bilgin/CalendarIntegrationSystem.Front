@@ -1,0 +1,14 @@
+<nav class="bg-gray-800 p-4 sticky w-full top-0 z-50">
+  <div class="container mx-auto flex justify-between items-center">
+    <div class="text-white text-lg font-bold">Logo</div>
+    <div class="space-x-4">
+      <span class="text-white">{{ email }}</span>
+      <button
+        class="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded"
+        (click)="logout()"
+      >
+        Logout
+      </button>
+    </div>
+  </div>
+</nav>
