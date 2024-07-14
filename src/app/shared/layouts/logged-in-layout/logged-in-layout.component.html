@@ -1,3 +1,9 @@
 <app-logged-in-header></app-logged-in-header>
 
-<ng-content></ng-content>
+<div class="flex">
+  <app-logged-in-sidebar></app-logged-in-sidebar>
+
+  <div class="flex-grow p-6 ml-64 bg-gradient h-[2000px]">
+    <ng-content></ng-content>
+  </div>
+</div>

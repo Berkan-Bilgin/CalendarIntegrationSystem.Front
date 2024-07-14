@@ -1,0 +1,31 @@
+<nav class="flex-grow p-4 overflow-y-auto">
+  <ul>
+    <li *ngFor="let item of menuItems" class="my-2">
+      <a
+        *ngIf="item.link"
+        class="p-2 rounded flex"
+        [routerLink]="item.link"
+        routerLinkActive="bg-headerHover text-white"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <span
+          class="material-icons mr-2"
+          [ngClass]="{
+            'text-white': isActive(item.link),
+            'text-headerHover': !isActive(item.link),
+          }"
+        >
+          {{ item.icon }}
+        </span>
+        <p
+          [ngClass]="{
+            'text-white': isActive(item.link),
+            'text-black': !isActive(item.link),
+          }"
+        >
+          {{ item.label }}
+        </p>
+      </a>
+    </li>
+  </ul>
+</nav>
