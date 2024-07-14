@@ -1,0 +1,53 @@
+<dialog id="my_modal_1" class="modal">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">{{ title }}</h3>
+    <p class="py-4">{{ content }}</p>
+    <form *ngIf="showForm" [formGroup]="form">
+      <div class="mb-4">
+        <label
+          class="block text-gray-700 text-sm font-bold mb-2"
+          for="eventName"
+        >
+          Event Name
+        </label>
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="eventName"
+          type="text"
+          formControlName="eventName"
+        />
+      </div>
+      <div class="mb-4">
+        <label
+          class="block text-gray-700 text-sm font-bold mb-2"
+          for="startDate"
+        >
+          Start Date
+        </label>
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="startDate"
+          type="datetime-local"
+          formControlName="startDate"
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="endDate">
+          End Date
+        </label>
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="endDate"
+          type="datetime-local"
+          formControlName="endDate"
+        />
+      </div>
+    </form>
+    <div class="modal-action">
+      <button class="btn" (click)="closeModal()">{{ cancelButtonText }}</button>
+      <button class="btn btn-primary" (click)="onConfirm()">
+        {{ confirmButtonText }}
+      </button>
+    </div>
+  </div>
+</dialog>
