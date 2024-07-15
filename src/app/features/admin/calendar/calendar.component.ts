@@ -42,7 +42,7 @@ export class CalendarComponent {
       right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
     },
     initialView: 'dayGridMonth',
-    initialEvents: INITIAL_EVENTS, // alternatively, use the `events` setting to fetch from a feed
+    // initialEvents: INITIAL_EVENTS, // alternatively, use the `events` setting to fetch from a feed
     weekends: true,
     editable: true,
     selectable: true,
@@ -62,7 +62,28 @@ export class CalendarComponent {
   constructor(
     private changeDetector: ChangeDetectorRef,
     private eventService: EventService,
-  ) {}
+  ) {
+    console.log(INITIAL_EVENTS);
+  }
+
+  ngOnInit() {
+    this.eventService.getEvents().subscribe((events) => {
+      // Eventleri FullCalendar formatına dönüştür
+      const calendarEvents = events.map((event: any) => ({
+        id: event.id,
+        title: event.title,
+        start: event.startDate,
+        end: event.endDate,
+        allDay: event.allDay || false, // allDay değerini backend'den de alabilirsiniz
+      }));
+
+      // CalendarOptions'a eventleri ekle
+      this.calendarOptions.update((options) => ({
+        ...options,
+        events: calendarEvents,
+      }));
+    });
+  }
 
   handleCalendarToggle() {
     this.calendarVisible.update((bool) => !bool);
@@ -115,15 +136,25 @@ export class CalendarComponent {
 
   handleEventClick(clickInfo: EventClickArg) {
     console.log('clickInfo', clickInfo.event);
+    //confirm yerine popup eklenicek
     if (
       confirm(
         `Are you sure you want to delete the event '${clickInfo.event.title}'`,
       )
     ) {
-      clickInfo.event.remove();
+      this.eventService.deleteEvent(clickInfo.event.id).subscribe(
+        () => {
+          // Başarılı olursa, etkinliği takvimden kaldır
+          clickInfo.event.remove();
+        },
+        (error) => {
+          // Hata olursa, kullanıcıya bir mesaj göster
+          console.error('Event silme hatası:', error);
+          alert('Event silinemedi. Lütfen tekrar deneyin.');
+        },
+      );
     }
   }
-
   handleEvents(events: EventApi[]) {
     this.currentEvents.set(events);
     this.changeDetector.detectChanges(); // workaround for pressionChangedAfterItHasBeenCheckedError
@@ -132,16 +163,23 @@ export class CalendarComponent {
   onConfirmModal(formValue: any) {
     const newEvent = {
       title: formValue.eventName,
-      start: formValue.startDate,
-      end: formValue.endDate,
-      allDay: false,
+      startDate: formValue.startDate,
+      endDate: formValue.endDate,
     };
 
     this.eventService.createEvent(newEvent).subscribe((event) => {
+      console.log('event nedir', newEvent);
       const calendarApi = this.selectedDateInfo?.view.calendar;
 
       if (calendarApi) {
-        calendarApi.addEvent(event);
+        const calendarEvent = {
+          id: event.id,
+          title: event.title,
+          start: event.startDate,
+          end: event.endDate,
+          allDay: event.allDay || false,
+        };
+        calendarApi.addEvent(calendarEvent);
       }
 
       this.selectedDateInfo = null;
