@@ -15,6 +15,7 @@ import listPlugin from '@fullcalendar/list';
 import { INITIAL_EVENTS, createEventId } from './event.utils';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import { EventService } from '../services/event.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-calendar',
@@ -28,6 +29,7 @@ export class CalendarComponent {
   modalContent: string = '';
   confirmButtonText: string = 'Save';
   cancelButtonText: string = 'Cancel';
+  confirmButtonClass: string = 'btn-primary';
   showForm: boolean = false;
   selectedEvent: EventApi | null = null;
   selectedDateInfo: DateSelectArg | null = null;
@@ -62,6 +64,7 @@ export class CalendarComponent {
   constructor(
     private changeDetector: ChangeDetectorRef,
     private eventService: EventService,
+    private toastr: ToastrService,
   ) {
     console.log(INITIAL_EVENTS);
   }
@@ -97,8 +100,6 @@ export class CalendarComponent {
   }
 
   handleDateSelect(selectInfo: DateSelectArg) {
-    // const title = prompt('Please enter a new title for your event');
-
     const calendarApi = selectInfo.view.calendar;
 
     calendarApi.unselect(); // clear date selection
@@ -109,6 +110,7 @@ export class CalendarComponent {
     this.confirmButtonText = 'Save';
     this.cancelButtonText = 'Cancel';
     this.showForm = true;
+    this.confirmButtonClass = 'btn-primary';
     this.selectedEvent = null;
     this.selectedDateInfo = selectInfo;
 
@@ -122,26 +124,19 @@ export class CalendarComponent {
     });
 
     this.myModal.openModal();
-
-    // if (title) {
-    //   calendarApi.addEvent({
-    //     id: createEventId(),
-    //     title,
-    //     start: selectInfo.startStr,
-    //     end: selectInfo.endStr,
-    //     allDay: selectInfo.allDay,
-    //   });
-    // }
   }
 
   handleEventClick(clickInfo: EventClickArg) {
     console.log('clickInfo', clickInfo.event);
-    //confirm yerine popup eklenicek
-    if (
-      confirm(
-        `Are you sure you want to delete the event '${clickInfo.event.title}'`,
-      )
-    ) {
+    this.modalTitle = 'Delete Event';
+    this.confirmButtonClass = 'btn-secondary';
+    this.modalContent = `Are you sure you want to delete the event '${clickInfo.event.title}'?`;
+    this.confirmButtonText = 'Delete';
+    this.cancelButtonText = 'Cancel';
+    this.showForm = false;
+    this.myModal.openModal();
+
+    this.myModal.confirm.subscribe(() => {
       this.eventService.deleteEvent(clickInfo.event.id).subscribe(
         () => {
           // Başarılı olursa, etkinliği takvimden kaldır
@@ -150,10 +145,9 @@ export class CalendarComponent {
         (error) => {
           // Hata olursa, kullanıcıya bir mesaj göster
           console.error('Event silme hatası:', error);
-          alert('Event silinemedi. Lütfen tekrar deneyin.');
         },
       );
-    }
+    });
   }
   handleEvents(events: EventApi[]) {
     this.currentEvents.set(events);
@@ -180,6 +174,7 @@ export class CalendarComponent {
           allDay: event.allDay || false,
         };
         calendarApi.addEvent(calendarEvent);
+        this.toastr.success('başarılı bir şekilde eklendi');
       }
 
       this.selectedDateInfo = null;

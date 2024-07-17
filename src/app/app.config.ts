@@ -20,7 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideToastr({
       closeButton: true,
       positionClass: 'toast-top-right',
-      timeOut: 10000,
+      timeOut: 2000,
       preventDuplicates: true,
     }),
   ],
