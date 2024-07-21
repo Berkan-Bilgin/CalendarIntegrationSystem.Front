@@ -11,6 +11,9 @@ export class EventService {
 
   constructor(private http: HttpClient) {}
 
+  getCalendarItems(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/calendarItems`);
+  }
   getEvents(): Observable<any> {
     return this.http.get(`${this.baseUrl}`);
   }
