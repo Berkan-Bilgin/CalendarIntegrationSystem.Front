@@ -40,10 +40,61 @@
   </div>
 
   <div class="demo-app-main">
-    <full-calendar *ngIf="calendarVisible()" [options]="calendarOptions()">
+    <full-calendar
+      #fullCalendar
+      *ngIf="calendarVisible()"
+      [options]="calendarOptions()"
+    >
       <ng-template #eventContent let-arg>
-        <b>{{ arg.timeText }}</b>
-        <i>{{ arg.event.title }}</i>
+        <div
+          (click)="logArg(arg)"
+          [ngClass]="{
+            'bg-blue-500': arg.event._def.extendedProps.itemType === 'Event',
+            'bg-green-500': arg.event._def.extendedProps.itemType === 'Task',
+          }"
+          class="relative flex items-center"
+        >
+          <b>{{ arg.timeText }}</b>
+          <i>{{ arg.event.title }}</i>
+          <div class="relative">
+            <div
+              #eventDropdownMenu
+              *ngIf="eventDropdownVisible && selectedEvent?.id === arg.event.id"
+              class="absolute left-0 mt-4 w-48 bg-white border rounded shadow-lg"
+            >
+              <div class="py-1">
+                <a
+                  class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  (click)="handleUpdateClick(arg.event)"
+                  >Update</a
+                >
+                <a
+                  class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  (click)="handleDeleteClick(arg.event)"
+                  >Delete</a
+                >
+              </div>
+            </div>
+            <div
+              #taskDropdownMenu
+              *ngIf="taskDropdownVisible && selectedEvent?.id === arg.event.id"
+              class="absolute left-0 mt-4 w-48 bg-white border rounded shadow-lg"
+            >
+              <div class="py-1">
+                <a
+                  class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  (click)="handleUpdateTaskClick(arg.event)"
+                  >Update Task</a
+                >
+                <a
+                  class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  (click)="handleDeleteTaskClick(arg.event)"
+                  >Delete Task</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
       </ng-template>
     </full-calendar>
   </div>
@@ -56,6 +107,8 @@
   [confirmButtonText]="confirmButtonText"
   [cancelButtonText]="cancelButtonText"
   [showForm]="showForm"
-  (confirm)="onConfirmModal($event)"
+  [itemType]="itemType"
+  [confirmButtonClass]="confirmButtonClass"
+  (confirm)="onConfirmModal()"
 >
 </app-modal>
